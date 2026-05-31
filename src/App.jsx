@@ -5,6 +5,7 @@ import About from './components/About';
 import Showcase from './components/Showcase';
 import UtilitiesSuite from './components/UtilitiesSuite';
 import MiniGame from './components/MiniGame';
+import GitUpdates from './components/GitUpdates';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 
@@ -26,6 +27,7 @@ export default function App() {
         <Showcase />
         <UtilitiesSuite />
         <MiniGame />
+        <GitUpdates />
         <Contact />
       </main>
 

@@ -14,7 +14,7 @@ export default function Navbar() {
         setScrolled(false);
       }
 
-      const sections = ['home', 'about', 'showcase', 'utilities', 'minigame', 'contact'];
+      const sections = ['home', 'about', 'showcase', 'utilities', 'minigame', 'git-updates', 'contact'];
       const scrollPosition = window.scrollY + 120;
 
       for (const section of sections) {
@@ -40,6 +40,7 @@ export default function Navbar() {
     { name: 'Showcase', id: 'showcase' },
     { name: 'Utilities', id: 'utilities' },
     { name: 'Mini Game', id: 'minigame' },
+    { name: 'Updates', id: 'git-updates' },
     { name: 'Contact', id: 'contact' },
   ];
 

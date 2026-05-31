@@ -1,0 +1,213 @@
+{
+  "utilities": [
+    {
+      "id": "pc-optimizer",
+      "title": "SpeedBooster PC Optimizer",
+      "description": "임시 파일 정리, 메모리 최적화 및 불필요한 시작 프로그램을 관리하여 PC 속도를 극대화하는 경량 유틸리티입니다.",
+      "longDescription": "SpeedBooster는 시스템 리소스를 실시간으로 진단하고 최적화하여 윈도우 부팅 속도를 개선하고 게임 실행 성능을 향상시킵니다. 시스템 레지스트리 및 디스크 쓰레기 파일을 안전하게 청소합니다.",
+      "version": "v1.4.2",
+      "size": "3.8 MB",
+      "releaseDate": "2026-05-15",
+      "downloadUrl": "/downloads/SpeedBooster_v1.4.2.zip",
+      "features": [
+        "원클릭 정크 파일 및 브라우저 캐시 삭제",
+        "실시간 RAM 메모리 회수 및 프로세스 우선순위 조정",
+        "시작 프로그램 지연 설정을 통한 부팅 성능 향상",
+        "안전한 시스템 백업 및 복구 시점 생성 기능"
+      ],
+      "requirements": {
+        "os": "Windows 10 / 11 (64-bit)",
+        "cpu": "Intel Core i3 이상 또는 동급 AMD 프로세서",
+        "ram": "2GB RAM 이상"
+      }
+    },
+    {
+      "id": "file-shredder",
+      "title": "Secure Shredder Pro",
+      "description": "복구가 불가능하도록 군사용 등급 알고리즘(DoD 5220.22-M)을 활용해 민감한 데이터를 영구 삭제하는 보안 도구입니다.",
+      "longDescription": "단순 휴지통 비우기로는 파일이 완전히 삭제되지 않습니다. Secure Shredder Pro는 해당 디스크 영역을 무작위 난수 데이터로 여러 번 덮어씌워 어떤 복구 소프트웨어로도 데이터를 살려낼 수 없도록 만듭니다.",
+      "version": "v2.0.1",
+      "size": "2.4 MB",
+      "releaseDate": "2026-04-10",
+      "downloadUrl": "/downloads/SecureShredder_v2.0.1.zip",
+      "features": [
+        "드래그 앤 드롭을 통한 간편한 파일 영구 파괴",
+        "DoD 5220.22-M (3-pass) 및 Gutmann (35-pass) 보안 알고리즘 지원",
+        "폴더 단위 및 디스크 여유 공간 제로 필(Zero-fill) 최적화",
+        "마우스 오른쪽 클릭 컨텍스트 메뉴 연동 지원"
+      ],
+      "requirements": {
+        "os": "Windows 7 / 8 / 10 / 11",
+        "cpu": "Pentium 4 이상",
+        "ram": "512MB RAM 이상"
+      }
+    }
+  ],
+  "games": [
+    {
+      "id": "neon-snake",
+      "title": "Retro Neon Snake",
+      "description": "네온 테마의 스타일리시한 고전 뱀 게임으로, 점수가 올라갈수록 비주얼 및 이펙트와 함께 점진적으로 뱀 이동 속도가 빨라집니다.",
+      "version": "v1.2.0",
+      "playable": true,
+      "releaseDate": "2026-05-30",
+      "controls": {
+        "방향키 (↑, ↓, ←, →) 또는 WASD": "뱀 머리 이동 방향 제어"
+      },
+      "features": [
+        "HTML5 Canvas 60FPS 네온 렌더링",
+        "사과 섭취 시 합성 오디오 효과 재생",
+        "로컬 저장소 최고 점수 자동 보존"
+      ]
+    },
+    {
+      "id": "neon-tetris",
+      "title": "Neon Tetris",
+      "description": "떨어지는 7가지 모양의 테트리스 블록(Tetrominos)을 격자판에 정렬하여 수평 라인을 맞추는 정통 아케이드 퍼즐 게임입니다.",
+      "version": "v1.0.1",
+      "playable": true,
+      "releaseDate": "2026-05-30",
+      "controls": {
+        "ArrowLeft / ArrowRight": "블록 좌우 한 칸씩 이동",
+        "ArrowUp": "블록 90도 시계방향 회전",
+        "ArrowDown": "블록 아래로 가속 소프트 드롭"
+      },
+      "features": [
+        "네온 색상 라인 완성 애니메이션",
+        "라인 제거 시 점수 가속 배율 시스템",
+        "동적 충돌 바운스 연산 구현"
+      ]
+    },
+    {
+      "id": "glass-minesweeper",
+      "title": "Glass Minesweeper",
+      "description": "세 가지 레벨(Easy, Medium, Hard)을 완수하는 고전 지뢰찾기로, 숫자 정보와 마우스 우클릭 깃발 꼽기를 활용해 지뢰를 탐지합니다.",
+      "version": "v1.0.0",
+      "playable": true,
+      "releaseDate": "2026-05-30",
+      "controls": {
+        "마우스 좌클릭": "일반 바닥 타일 안전 확인",
+        "마우스 우클릭": "지뢰 의심 영역 깃발 설치/해제",
+        "스마일 얼굴 클릭": "새 게임 보드 셔플 생성"
+      },
+      "features": [
+        "8x8, 10x10, 12x12 격자판 지원",
+        "0이 인접한 안전 타일의 재귀적 DFS 자동 드러내기",
+        "지뢰 폭발 시 안전판 지뢰 위치 일체 공개"
+      ]
+    },
+    {
+      "id": "neon-pong",
+      "title": "Neon Pong DX",
+      "description": "인공지능 로봇의 패들을 상대로 볼을 상대 진영 벽으로 튕겨내는 클래식 무한 핑퐁 대전 게임입니다.",
+      "version": "v1.1.0",
+      "playable": true,
+      "releaseDate": "2026-05-30",
+      "controls": {
+        "ArrowUp / ArrowDown 또는 W / S": "왼쪽 아군 패들 위아래 조작"
+      },
+      "features": [
+        "패들의 타점 위치에 따른 반사각 변경 엔진",
+        "볼 속도 및 난이도 자동 가속 시스템",
+        "5선승제 선취 방식 구현"
+      ]
+    },
+    {
+      "id": "cyber-invaders",
+      "title": "Cyber Invaders",
+      "description": "외계 함선 부대가 편대를 이뤄 하강 공격하는 맹공을 막아내는 탄막 기지 방어형 슈팅 아케이드 게임입니다.",
+      "version": "v1.3.0",
+      "playable": true,
+      "releaseDate": "2026-05-30",
+      "controls": {
+        "ArrowLeft / ArrowRight": "전투 우주선 좌우 이동",
+        "Space Bar": "기본 레더 미사일 발사"
+      },
+      "features": [
+        "외계 우주선 무리 충돌 판정 구현",
+        "레벨 클리어 시 편대 스폰 재배치 기능",
+        "타격 시 오디오 효과 피드백 지원"
+      ]
+    },
+    {
+      "id": "brick-breaker",
+      "title": "Brick Breaker",
+      "description": "바운스되는 금속 공을 떨어트리지 않고 패들로 받아내 화면 상단에 정렬된 모든 네온 벽돌을 깨뜨려 나가는 아케이드 게임입니다.",
+      "version": "v1.0.0",
+      "playable": true,
+      "releaseDate": "2026-05-30",
+      "controls": {
+        "ArrowLeft / ArrowRight": "하단 패들 좌우 제어"
+      },
+      "features": [
+        "벽돌 충돌 후 파티클 및 튕김 가속 물리 연산",
+        "다채로운 네온 그리드 스킨 구성",
+        "무한 스폰 다음 난이도 연계 플레이"
+      ]
+    },
+    {
+      "id": "game-2048",
+      "title": "2048 Neon",
+      "description": "동일한 숫자를 상하좌우로 슬라이드 병합하여 최종 2048 블록 타일을 생성해내는 고도의 수학 두뇌 퍼즐 게임입니다.",
+      "version": "v1.0.0",
+      "playable": true,
+      "releaseDate": "2026-05-30",
+      "controls": {
+        "ArrowUp / ArrowDown / ArrowLeft / ArrowRight": "숫자 타일 한 방향 몰아 슬라이드"
+      },
+      "features": [
+        "4x4 매트릭스 병합 물리 연산",
+        "병합 단계별 그라데이션 광원 적용",
+        "더 이상 이동 불가 시 자동 게임오버 안내"
+      ]
+    },
+    {
+      "id": "tictactoe",
+      "title": "Smart AI Tic-Tac-Toe",
+      "description": "3x3 격자판에서 X와 O 기호를 3줄을 잇기 위해 수학적 미니맥스(Minimax) 탐색 트리 알고리즘으로 무장한 컴퓨터와 겨룹니다.",
+      "version": "v1.0.2",
+      "playable": true,
+      "releaseDate": "2026-05-30",
+      "controls": {
+        "마우스 클릭": "원하는 빈 슬롯 선택"
+      },
+      "features": [
+        "완벽한 연산 능력의 인공지능 탐색 알고리즘 탑재",
+        "승리/패배/무승부 오버레이 뷰 지원",
+        "원클릭 간편 리셋 기능"
+      ]
+    },
+    {
+      "id": "memory-match",
+      "title": "Memory Card Match",
+      "description": "뒷면이 보이지 않는 16장의 개발용 상징 카드를 두 장씩 순차적으로 뒤집어 일치하는 짝을 맞춰 점수를 얻는 메모리 강화 퍼즐입니다.",
+      "version": "v1.0.0",
+      "playable": true,
+      "releaseDate": "2026-05-30",
+      "controls": {
+        "마우스 클릭": "카드 짝 뒤집기 시도"
+      },
+      "features": [
+        "부드러운 CSS 3D 입체 카드 회전 효과",
+        "성공 횟수 트래커 통계",
+        "카드 짝 셔플 엔진 내장"
+      ]
+    },
+    {
+      "id": "flappy-drone",
+      "title": "Flappy Cyber Drone",
+      "description": "마우스 클릭이나 스페이스바를 누를 때마다 중력을 거슬러 공중 점프하며 장애물 기둥들을 무사히 통과해 점수를 획득하는 비행 게임입니다.",
+      "version": "v1.0.0",
+      "playable": true,
+      "releaseDate": "2026-05-30",
+      "controls": {
+        "Space Bar / ArrowUp 또는 화면 좌클릭": "드론 공중 비행 조작"
+      },
+      "features": [
+        "중력 저항 및 수직 속도 증가 물리 반영",
+        "기둥 장애물 통과 시마다 점수 상승 연계",
+        "장애물 생성 간격 랜덤 딜레이 스폰"
+      ]
+    }
+  ]
+}

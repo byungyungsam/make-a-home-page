@@ -98,351 +98,85 @@ export default function UtilitiesSuite() {
    1. Clock & Focus Timer Widget
    ========================================================================== */
 function ClockWidget({ playBeep }) {
-  const [time, setTime] = useState(new Date());
-  const [clockMode, setClockMode] = useState('digital'); // digital | analog
-  const [themeColor, setThemeColor] = useState('#00f2fe'); // cyan | purple | green
-  const [fontFamily, setFontFamily] = useState('Outfit');
-  const [blurLevel, setBlurLevel] = useState(5);
-  
-  // Timer States
-  const [timerMode, setTimerMode] = useState('timer'); // stopwatch | timer | pomodoro
-  const [swTime, setSwTime] = useState(0); // stopwatch milliseconds
-  const [swRunning, setSwRunning] = useState(false);
-  const swIntervalRef = useRef(null);
-
-  const [tSeconds, setTSeconds] = useState(600); // Countdown timer seconds
-  const [tRunning, setTRunning] = useState(false);
-  const [tInputMinutes, setTInputMinutes] = useState(10);
-  const tIntervalRef = useRef(null);
-
-  // Pomodoro
-  const [pomoState, setPomoState] = useState('focus'); // focus | break
-  const [pomoRunning, setPomoRunning] = useState(false);
-  const [pomoTimeLeft, setPomoTimeLeft] = useState(25 * 60); // 25 min default
-  const pomoIntervalRef = useRef(null);
-
-  // Dynamic Clock Update
-  useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Stop Watch logic
-  useEffect(() => {
-    if (swRunning) {
-      swIntervalRef.current = setInterval(() => {
-        setSwTime(prev => prev + 10);
-      }, 10);
-    } else {
-      clearInterval(swIntervalRef.current);
-    }
-    return () => clearInterval(swIntervalRef.current);
-  }, [swRunning]);
-
-  // Timer logic
-  useEffect(() => {
-    if (tRunning) {
-      tIntervalRef.current = setInterval(() => {
-        setTSeconds(prev => {
-          if (prev <= 1) {
-            setTRunning(false);
-            playBeep(880, 0.5, 'sine');
-            setTimeout(() => playBeep(1100, 0.5, 'sine'), 600);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else {
-      clearInterval(tIntervalRef.current);
-    }
-    return () => clearInterval(tIntervalRef.current);
-  }, [tRunning, playBeep]);
-
-  // Pomodoro logic
-  useEffect(() => {
-    if (pomoRunning) {
-      pomoIntervalRef.current = setInterval(() => {
-        setPomoTimeLeft(prev => {
-          if (prev <= 1) {
-            playBeep(987.77, 0.6, 'sawtooth');
-            if (pomoState === 'focus') {
-              setPomoState('break');
-              return 5 * 60; // 5 min break
-            } else {
-              setPomoState('focus');
-              return 25 * 60; // 25 min focus
-            }
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else {
-      clearInterval(pomoIntervalRef.current);
-    }
-    return () => clearInterval(pomoIntervalRef.current);
-  }, [pomoRunning, pomoState, playBeep]);
-
-  const handleTimerSet = () => {
-    setTSeconds(tInputMinutes * 60);
-    setTRunning(false);
-  };
-
-  // Format stopwatch
-  const formatStopwatch = (ms) => {
-    const min = Math.floor(ms / 60000).toString().padStart(2, '0');
-    const sec = Math.floor((ms % 60000) / 1000).toString().padStart(2, '0');
-    const centi = Math.floor((ms % 1000) / 10).toString().padStart(2, '0');
-    return `${min}:${sec}.${centi}`;
-  };
-
-  // Format Countdown
-  const formatCountdown = (totalSec) => {
-    const min = Math.floor(totalSec / 60).toString().padStart(2, '0');
-    const sec = (totalSec % 60).toString().padStart(2, '0');
-    return `${min}:${sec}`;
-  };
-
-  // SVGs Analog hands calculation
-  const sec = time.getSeconds();
-  const min = time.getMinutes();
-  const hr = time.getHours();
-  const sAngle = sec * 6;
-  const mAngle = min * 6 + sec * 0.1;
-  const hAngle = (hr % 12) * 30 + min * 0.5;
-
   return (
-    <div>
-      <div className="utility-header">
-        <div className="utility-title-wrapper">
-          <Clock className="icon-cyan" />
-          <h3 className="utility-title">바탕화면 시계 & 타이머 (Widget Clock)</h3>
+    <div className="flex flex-col gap-6 p-6">
+      <div className="utility-header mb-6">
+        <div className="utility-title-wrapper flex items-center gap-2">
+          <Clock className="icon-cyan w-6 h-6 text-[#00f2fe]" />
+          <h3 className="utility-title text-2xl font-bold">바탕화면 네온 시계 위젯 (Desktop Clock App)</h3>
         </div>
-        <p className="utility-desc">네온 테마의 바탕화면 시계 시뮬레이터와 집중 관리를 돕는 타이머 세트입니다.</p>
+        <p className="utility-desc text-gray-400 mt-2">
+          본 시계는 웹 브라우저 안에서만 동작하던 기존 방식을 개선하여, 
+          **PC 바탕화면에 항상 띄워놓고 자유롭게 전시하여 사용할 수 있는 별도의 단독 실행형 데스크톱 앱**으로 업그레이드되었습니다.
+        </p>
       </div>
 
-      <div className="u-grid-2">
-        {/* Left Side: Clock Customizer */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-          <div className="glass-panel" style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.02)' }}>
-            <h4 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Settings size={16} className="text-neon-cyan" /> 위젯 디스플레이 설정
-            </h4>
-
-            <div className="u-form-group">
-              <span className="u-label">시계 형태</span>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button 
-                  onClick={() => setClockMode('digital')} 
-                  className={`u-btn btn-action-small ${clockMode === 'digital' ? 'u-btn-primary' : 'u-btn-secondary'}`}
-                  style={{ flex: 1 }}
-                >
-                  디지털
-                </button>
-                <button 
-                  onClick={() => setClockMode('analog')} 
-                  className={`u-btn btn-action-small ${clockMode === 'analog' ? 'u-btn-primary' : 'u-btn-secondary'}`}
-                  style={{ flex: 1 }}
-                >
-                  아날로그
-                </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        {/* Left Side: Mock Visual Showcase */}
+        <div className="relative flex justify-center items-center p-8 rounded-2xl bg-white/[0.02] border border-white/10 overflow-hidden min-h-[250px]">
+          <div className="absolute top-[-20%] left-[-20%] w-[60vw] h-[60vw] rounded-full bg-[#00f2fe]/5 blur-[80px] pointer-events-none" />
+          
+          {/* Mock Window Widget */}
+          <div className="w-full max-w-[320px] rounded-2xl border border-white/20 bg-[#131520]/90 p-5 shadow-[0_0_25px_rgba(0,242,254,0.25)] relative transform hover:scale-[1.02] transition-transform duration-300">
+            <div className="flex justify-between items-center text-[10px] text-gray-500 mb-3">
+              <span>⏱ 바탕화면 위젯 시계</span>
+              <div className="flex gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-white/10 flex items-center justify-center text-[8px] cursor-pointer">⚙</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-white/10 flex items-center justify-center text-[8px] cursor-pointer">✕</span>
               </div>
             </div>
-
-            <div className="u-form-group">
-              <span className="u-label">네온 광원 색상</span>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                {['#00f2fe', '#9b51e0', '#10b981', '#f59e0b', '#ef4444'].map(color => (
-                  <button
-                    key={color}
-                    onClick={() => setThemeColor(color)}
-                    style={{ 
-                      flex: 1, 
-                      height: '30px', 
-                      background: color, 
-                      borderRadius: '6px', 
-                      border: themeColor === color ? '2px solid white' : 'none',
-                      cursor: 'pointer'
-                    }}
-                  />
-                ))}
-              </div>
+            
+            <div className="text-center py-6">
+              <span className="text-4xl font-extrabold tracking-wider text-[#00f2fe] drop-shadow-[0_0_8px_rgba(0,242,254,0.8)] block font-mono">
+                14:42:52
+              </span>
+              <span className="text-[10px] text-gray-500 block mt-2">
+                2026년 5월 31일 일요일
+              </span>
             </div>
 
-            <div className="u-form-group">
-              <span className="u-label">서체 (Fonts)</span>
-              <select className="u-select" value={fontFamily} onChange={(e) => setFontFamily(e.target.value)}>
-                <option value="Outfit">Modern Outfit</option>
-                <option value="'Courier New', monospace">Digital Retro (Monospace)</option>
-                <option value="Georgia, serif">Classic Serif</option>
-              </select>
-            </div>
-
-            <div className="u-form-group">
-              <span className="u-label">배경 흐림 효과 (Blur): {blurLevel}px</span>
-              <input 
-                type="range" 
-                className="u-range" 
-                min="0" 
-                max="20" 
-                value={blurLevel} 
-                onChange={(e) => setBlurLevel(Number(e.target.value))} 
-              />
+            <div className="flex gap-2 justify-center border-t border-white/5 pt-3 mt-2">
+              <span className="text-[9px] text-[#00f2fe] px-2 py-0.5 rounded bg-[#00f2fe]/10 border border-[#00f2fe]/20">시계</span>
+              <span className="text-[9px] text-gray-500 px-2 py-0.5">스톱워치</span>
             </div>
           </div>
         </div>
 
-        {/* Right Side: Visual Clock Output */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div className="clock-display-wrapper" style={{ backdropFilter: `blur(${blurLevel}px)` }}>
-            {/* Soft colored neon ambient circle */}
-            <div style={{
-              position: 'absolute',
-              width: '180px',
-              height: '180px',
-              background: themeColor,
-              opacity: 0.08,
-              filter: 'blur(50px)',
-              zIndex: 0
-            }} />
+        {/* Right Side: Features & Download */}
+        <div className="flex flex-col gap-5">
+          <h4 className="text-lg font-semibold text-white">데스크톱 앱 주요 특징</h4>
+          
+          <ul className="space-y-3 text-sm text-gray-300">
+            <li className="flex items-start gap-2">
+              <span className="text-[#00f2fe] font-bold">✔</span>
+              <span>**완벽한 바탕화면 노출**: 투명 유리 스타일의 글래스모피즘이 적용되어 배경화면과 자연스럽게 어우러집니다.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#00f2fe] font-bold">✔</span>
+              <span>**마우스 자유 이동**: 위젯을 잡고 드래그하면 모니터 어디든 자유롭게 배치가 가능합니다.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#00f2fe] font-bold">✔</span>
+              <span>**다양한 커스텀**: 마우스 우클릭을 통해 5종 네온 광원 색상(블루/퍼플/그린/오렌지/레드) 및 항상 위에 고정 설정을 제공합니다.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#00f2fe] font-bold">✔</span>
+              <span>**스톱워치 연동**: 필요시 우하단 모드 전환을 통해 소수점 두 자리까지 세밀한 시간 측정이 가능합니다.</span>
+            </li>
+          </ul>
 
-            {clockMode === 'digital' ? (
-              <div style={{ textAlign: 'center', zIndex: 1, fontFamily: fontFamily }}>
-                <div className="clock-digital-text" style={{ color: themeColor, textShadow: `0 0 20px ${themeColor}aa` }}>
-                  {time.toLocaleTimeString('ko-KR', { hour12: false })}
-                </div>
-                <div className="clock-date-text">
-                  {time.toLocaleDateString('ko-KR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                </div>
-              </div>
-            ) : (
-              <svg className="analog-clock-svg" viewBox="0 0 100 100" style={{ zIndex: 1 }}>
-                {/* Clock face */}
-                <circle cx="50" cy="50" r="45" fill="none" stroke={themeColor} strokeWidth="1.5" style={{ filter: `drop-shadow(0 0 5px ${themeColor}bb)` }} />
-                {/* Center dot */}
-                <circle cx="50" cy="50" r="2" fill="white" />
-                {/* Hour ticks */}
-                {[...Array(12)].map((_, i) => {
-                  const angle = (i * 30 * Math.PI) / 180;
-                  const x1 = 50 + 40 * Math.sin(angle);
-                  const y1 = 50 - 40 * Math.cos(angle);
-                  const x2 = 50 + 43 * Math.sin(angle);
-                  const y2 = 50 - 43 * Math.cos(angle);
-                  return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={themeColor} strokeWidth="1.5" />;
-                })}
-                {/* Hands */}
-                <line x1="50" y1="50" x2={50 + 22 * Math.sin((hAngle * Math.PI) / 180)} y2={50 - 22 * Math.cos((hAngle * Math.PI) / 180)} stroke="white" strokeWidth="2" strokeLinecap="round" />
-                <line x1="50" y1="50" x2={50 + 32 * Math.sin((mAngle * Math.PI) / 180)} y2={50 - 32 * Math.cos((mAngle * Math.PI) / 180)} stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-                <line x1="50" y1="50" x2={50 + 38 * Math.sin((sAngle * Math.PI) / 180)} y2={50 - 38 * Math.cos((sAngle * Math.PI) / 180)} stroke={themeColor} strokeWidth="1" strokeLinecap="round" />
-              </svg>
-            )}
-          </div>
-
-          {/* Interactive timers menu */}
-          <div className="glass-panel" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.02)' }}>
-            <div style={{ display: 'flex', gap: '0.4rem', borderBottom: '1px solid var(--border-glass)', paddingBottom: '0.75rem', marginBottom: '0.75rem' }}>
-              {['stopwatch', 'timer', 'pomodoro'].map(m => (
-                <button 
-                  key={m} 
-                  onClick={() => setTimerMode(m)}
-                  className={`utility-sidebar-btn ${timerMode === m ? 'utility-sidebar-btn-active' : ''}`}
-                  style={{ flex: 1, padding: '0.5rem', justifyContent: 'center' }}
-                >
-                  {m === 'stopwatch' ? '스톱워치' : m === 'timer' ? '타이머' : '포모도로'}
-                </button>
-              ))}
-            </div>
-
-            {timerMode === 'stopwatch' && (
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0.5rem 0', fontFamily: 'monospace', letterSpacing: '0.05em' }}>
-                  {formatStopwatch(swTime)}
-                </div>
-                <div className="clock-controls-row" style={{ justifyContent: 'center' }}>
-                  <button 
-                    onClick={() => { setSwRunning(!swRunning); playBeep(523, 0.08); }} 
-                    className="u-btn btn-action-small u-btn-primary"
-                  >
-                    {swRunning ? <Pause size={14} /> : <Play size={14} />} {swRunning ? '일시정지' : '시작'}
-                  </button>
-                  <button 
-                    onClick={() => { setSwRunning(false); setSwTime(0); playBeep(349, 0.08); }} 
-                    className="u-btn btn-action-small u-btn-secondary"
-                  >
-                    <RotateCcw size={14} /> 초기화
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {timerMode === 'timer' && (
-              <div>
-                <div className="flex-center-between" style={{ marginBottom: '0.5rem' }}>
-                  <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-                    <input 
-                      type="number" 
-                      className="u-input" 
-                      value={tInputMinutes} 
-                      onChange={(e) => setTInputMinutes(Math.max(1, parseInt(e.target.value) || 0))}
-                      style={{ width: '60px', padding: '0.4rem' }} 
-                      disabled={tRunning}
-                    />
-                    <span className="u-label">분 설정</span>
-                  </div>
-                  <button 
-                    onClick={() => { handleTimerSet(); playBeep(523, 0.08); }}
-                    className="u-btn btn-action-small u-btn-secondary"
-                    disabled={tRunning}
-                  >
-                    적용
-                  </button>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0.5rem 0', fontFamily: 'monospace', letterSpacing: '0.05em' }}>
-                    {formatCountdown(tSeconds)}
-                  </div>
-                  <div className="clock-controls-row" style={{ justifyContent: 'center' }}>
-                    <button 
-                      onClick={() => { setTRunning(!tRunning); playBeep(523, 0.08); }} 
-                      className="u-btn btn-action-small u-btn-primary"
-                    >
-                      {tRunning ? <Pause size={14} /> : <Play size={14} />} {tRunning ? '일시정지' : '시작'}
-                    </button>
-                    <button 
-                      onClick={() => { setTRunning(false); setTSeconds(tInputMinutes * 60); playBeep(349, 0.08); }} 
-                      className="u-btn btn-action-small u-btn-secondary"
-                    >
-                      <RotateCcw size={14} /> 초기화
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {timerMode === 'pomodoro' && (
-              <div style={{ textAlign: 'center' }}>
-                <span className="priority-tag priority-high" style={{ padding: '0.25rem 0.75rem', fontSize: '0.8rem' }}>
-                  {pomoState === 'focus' ? '🎯 집중 세션 (25분)' : '☕ 휴식 세션 (5분)'}
-                </span>
-                <div style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0.75rem 0', fontFamily: 'monospace', letterSpacing: '0.05em' }}>
-                  {formatCountdown(pomoTimeLeft)}
-                </div>
-                <div className="clock-controls-row" style={{ justifyContent: 'center' }}>
-                  <button 
-                    onClick={() => { setPomoRunning(!pomoRunning); playBeep(523, 0.08); }} 
-                    className="u-btn btn-action-small u-btn-primary"
-                  >
-                    {pomoRunning ? <Pause size={14} /> : <Play size={14} />} {pomoRunning ? '일시정지' : '시작'}
-                  </button>
-                  <button 
-                    onClick={() => { setPomoRunning(false); setPomoTimeLeft(pomoState === 'focus' ? 25 * 60 : 5 * 60); playBeep(349, 0.08); }} 
-                    className="u-btn btn-action-small u-btn-secondary"
-                  >
-                    <RotateCcw size={14} /> 초기화
-                  </button>
-                </div>
-              </div>
-            )}
+          <div className="mt-4">
+            <a 
+              href="./downloads/DesktopClock_v1.0.0.zip" 
+              download 
+              onClick={() => playBeep && playBeep(880, 0.15)}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-[#00f2fe] to-[#9b51e0] hover:from-[#00f2fe]/90 hover:to-[#9b51e0]/90 text-black font-bold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg shadow-[#00f2fe]/20"
+            >
+              <Download className="w-5 h-5" /> 바탕화면 네온 시계 위젯 다운로드 (.ZIP)
+            </a>
+            <span className="block text-xs text-gray-500 mt-2">
+              * 용량: 약 12KB │ Windows 10 / 11 지원 │ 설치 불필요 단독 실행 파일 포함
+            </span>
           </div>
         </div>
       </div>

@@ -846,17 +846,16 @@ function PongGame({ playBeep }) {
   );
 }
 
-/* ==========================================================================
-   5. Space Invaders (Cyber Shooter) Game Component
-   ========================================================================== */
 function ShooterGame({ playBeep }) {
   const canvasRef = useRef(null);
   const [score, setScore] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [difficulty, setDifficulty] = useState('easy'); // 'easy' | 'medium' | 'hard'
 
   const playerX = useRef(180);
   const lasers = useRef([]);
+  const enemyLasers = useRef([]);
   const enemies = useRef([]);
   const keyState = useRef({});
 
@@ -869,7 +868,8 @@ function ShooterGame({ playBeep }) {
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault();
       keyState.current[e.key] = true;
       if (e.key === ' ' && isPlaying) {
-        lasers.current.push({ x: playerX.current + 18, y: 360, vy: -5 });
+        // Player shoots a laser (Cyan)
+        lasers.current.push({ x: playerX.current + 20, y: 350, vy: -6 });
         playBeep(700, 0.05, 'triangle');
       }
     };
@@ -890,8 +890,8 @@ function ShooterGame({ playBeep }) {
           x: c * 50 + 50,
           y: r * 40 + 40,
           w: 30,
-          h: 20,
-          vx: 0.8,
+          h: 22,
+          vx: difficulty === 'easy' ? 0.6 : difficulty === 'medium' ? 0.9 : 1.3,
           dir: 1
         });
       }
@@ -908,21 +908,27 @@ function ShooterGame({ playBeep }) {
     };
     animId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animId);
-  }, [isPlaying]);
+  }, [isPlaying, difficulty]); // update when difficulty changes
 
   const update = () => {
     // Player controls
     if (keyState.current['ArrowLeft'] || keyState.current['a']) {
-      playerX.current = Math.max(0, playerX.current - 4);
+      playerX.current = Math.max(0, playerX.current - 5);
     }
     if (keyState.current['ArrowRight'] || keyState.current['d']) {
-      playerX.current = Math.min(360, playerX.current + 4);
+      playerX.current = Math.min(360, playerX.current + 5);
     }
 
-    // Bullet update
+    // Player Lasers update
     lasers.current = lasers.current.filter(l => {
       l.y += l.vy;
       return l.y > 0;
+    });
+
+    // Enemy Lasers update
+    enemyLasers.current = enemyLasers.current.filter(el => {
+      el.y += el.vy;
+      return el.y < 400;
     });
 
     // Enemy movement
@@ -935,12 +941,28 @@ function ShooterGame({ playBeep }) {
     if (dropDown) {
       enemies.current.forEach(e => {
         e.dir = -e.dir;
-        e.y += 10;
-        if (e.y >= 350) triggerEnd();
+        e.y += 12;
+        if (e.y >= 340) triggerEnd();
       });
     }
 
-    // Collision detection
+    // Enemy shooting logic (frequency based on difficulty)
+    if (isPlaying && enemies.current.length > 0) {
+      const fireProbability = difficulty === 'easy' ? 0.0008 : difficulty === 'medium' ? 0.005 : 0.015;
+      const bulletSpeed = difficulty === 'easy' ? 2 : difficulty === 'medium' ? 3 : 4.5;
+      
+      enemies.current.forEach(e => {
+        if (Math.random() < fireProbability) {
+          enemyLasers.current.push({
+            x: e.x + e.w / 2,
+            y: e.y + e.h,
+            vy: bulletSpeed
+          });
+        }
+      });
+    }
+
+    // Player Laser -> Enemy collisions
     lasers.current.forEach((l, lIdx) => {
       enemies.current.forEach((e, eIdx) => {
         if (l.x >= e.x && l.x <= e.x + e.w && l.y >= e.y && l.y <= e.y + e.h) {
@@ -952,8 +974,17 @@ function ShooterGame({ playBeep }) {
       });
     });
 
+    // Enemy Laser -> Player collisions
+    enemyLasers.current.forEach((el, elIdx) => {
+      if (el.x >= playerX.current && el.x <= playerX.current + 40 && el.y >= 355 && el.y <= 380) {
+        enemyLasers.current.splice(elIdx, 1);
+        triggerEnd();
+        playBeep(120, 0.4, 'sawtooth');
+      }
+    });
+
     if (enemies.current.length === 0) {
-      spawnEnemies(); // next level
+      spawnEnemies(); // Next level
       playBeep(1100, 0.2);
     }
   };
@@ -968,40 +999,151 @@ function ShooterGame({ playBeep }) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    ctx.fillStyle = '#0f111a';
+    // Space dark background
+    ctx.fillStyle = '#0a0c14';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw lasers
+    // Draw stars in background
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+    for (let i = 0; i < 15; i++) {
+      const starX = (i * 37 + 13) % 400;
+      const starY = (i * 83 + 57) % 400;
+      ctx.fillRect(starX, starY, 1.5, 1.5);
+    }
+
+    // Draw player lasers (Cyan glow)
+    ctx.save();
     ctx.fillStyle = '#00f2fe';
     ctx.shadowBlur = 8;
     ctx.shadowColor = '#00f2fe';
     lasers.current.forEach(l => {
-      ctx.fillRect(l.x, l.y, 4, 10);
+      ctx.fillRect(l.x - 2, l.y, 4, 10);
+    });
+    ctx.restore();
+
+    // Draw enemy lasers (Red glow)
+    ctx.save();
+    ctx.fillStyle = '#ff3366';
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = '#ff3366';
+    enemyLasers.current.forEach(el => {
+      ctx.fillRect(el.x - 2, el.y, 4, 10);
+    });
+    ctx.restore();
+
+    // Draw enemies (Astronaut/Alien Space Invader visual)
+    enemies.current.forEach(e => {
+      drawInvader(ctx, e.x, e.y, e.w, e.h);
     });
 
-    // Draw enemies
+    // Draw player combat spaceship
+    drawPlayerShip(ctx, playerX.current);
+  };
+
+  // Helper to draw alien space invader
+  const drawInvader = (ctx, x, y, w, h) => {
+    ctx.save();
     ctx.fillStyle = '#ff3366';
     ctx.shadowColor = '#ff3366';
-    enemies.current.forEach(e => {
-      ctx.fillRect(e.x, e.y, e.w, e.h);
-    });
-
-    // Draw player ship
-    ctx.fillStyle = '#9b51e0';
-    ctx.shadowColor = '#9b51e0';
+    ctx.shadowBlur = 6;
+    
+    // Draw body/helmet dome
     ctx.beginPath();
-    ctx.moveTo(playerX.current + 20, 360);
-    ctx.lineTo(playerX.current, 380);
-    ctx.lineTo(playerX.current + 40, 380);
+    ctx.arc(x + w / 2, y + h / 2 - 1, w / 3, Math.PI, 0, false);
+    ctx.lineTo(x + w / 2 + w / 3, y + h - 3);
+    ctx.lineTo(x + w / 2 - w / 3, y + h - 3);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Visor of the astronaut suit
+    ctx.fillStyle = '#00f2fe';
+    ctx.shadowColor = '#00f2fe';
+    ctx.beginPath();
+    ctx.arc(x + w / 2, y + h / 2 - 1, w / 5, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Legs
+    ctx.fillStyle = '#ff3366';
+    ctx.shadowColor = '#ff3366';
+    ctx.fillRect(x + w / 2 - w / 4 - 1, y + h - 3, 2, 4); // left
+    ctx.fillRect(x + w / 2 + w / 4 - 1, y + h - 3, 2, 4); // right
+    ctx.fillRect(x + w / 2 - 1, y + h - 3, 2, 4); // middle
+    
+    // Left/Right arms
+    ctx.beginPath();
+    ctx.moveTo(x + w / 2 - w / 3, y + h / 2);
+    ctx.lineTo(x + 2, y + h / 2 + 2);
+    ctx.moveTo(x + w / 2 + w / 3, y + h / 2);
+    ctx.lineTo(x + w - 2, y + h / 2 + 2);
+    ctx.strokeStyle = '#ff3366';
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+    
+    ctx.restore();
+  };
+
+  // Helper to draw the combat spaceship
+  const drawPlayerShip = (ctx, px) => {
+    ctx.save();
+    
+    // Draw wing thruster flames
+    if (isPlaying) {
+      ctx.fillStyle = '#ff9900';
+      ctx.shadowColor = '#ff3300';
+      ctx.shadowBlur = 10;
+      const fireHeight = 4 + Math.random() * 6;
+      ctx.beginPath();
+      ctx.moveTo(px + 18, 380);
+      ctx.lineTo(px + 20, 380 + fireHeight);
+      ctx.lineTo(px + 22, 380);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Fuselage / main body (Cyan)
+    ctx.fillStyle = '#00f2fe';
+    ctx.shadowColor = '#00f2fe';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.moveTo(px + 20, 355); // Nose cone
+    ctx.lineTo(px + 12, 378);
+    ctx.lineTo(px + 28, 378);
     ctx.closePath();
     ctx.fill();
 
-    ctx.shadowBlur = 0;
+    // Wings (Purple)
+    ctx.fillStyle = '#9b51e0';
+    ctx.shadowColor = '#9b51e0';
+    ctx.beginPath();
+    ctx.moveTo(px, 380);
+    ctx.lineTo(px + 10, 370);
+    ctx.lineTo(px + 12, 380);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(px + 40, 380);
+    ctx.lineTo(px + 30, 370);
+    ctx.lineTo(px + 28, 380);
+    ctx.closePath();
+    ctx.fill();
+
+    // Cockpit window (White)
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.moveTo(px + 20, 362);
+    ctx.lineTo(px + 16, 372);
+    ctx.lineTo(px + 24, 372);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
   };
 
   const start = () => {
     playerX.current = 180;
     lasers.current = [];
+    enemyLasers.current = [];
     setScore(0);
     setGameOver(false);
     spawnEnemies();
@@ -1010,21 +1152,45 @@ function ShooterGame({ playBeep }) {
 
   return (
     <div className="game-screen-col">
-      <div style={{ display: 'flex', gap: '2rem', marginBottom: '1rem', width: '400px', justifyContent: 'space-between' }}>
-        <span>Score: {score}</span>
-        <span>Space: 미사일 발사</span>
+      {/* Difficulty and Score Header */}
+      <div className="flex-center-between w-full max-w-[400px] mb-3 p-3 glass-panel" style={{ background: 'rgba(255,255,255,0.01)' }}>
+        <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+          {['easy', 'medium', 'hard'].map(d => (
+            <button
+              key={d}
+              onClick={() => {
+                if (!isPlaying) {
+                  setDifficulty(d);
+                  playBeep(440, 0.05);
+                }
+              }}
+              disabled={isPlaying}
+              className={`u-btn btn-action-small ${difficulty === d ? 'u-btn-primary' : 'u-btn-secondary'}`}
+              style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem', opacity: isPlaying ? 0.5 : 1 }}
+            >
+              {d === 'easy' ? '초급' : d === 'medium' ? '중급' : '고급'}
+            </button>
+          ))}
+        </div>
+        <div style={{ fontWeight: 'bold', color: '#00f2fe', textShadow: '0 0 10px rgba(0,242,254,0.5)' }}>
+          Score: {score}
+        </div>
       </div>
 
       <div className="canvas-container">
         <canvas ref={canvasRef} width={400} height={400} className="canvas-element" />
         {(!isPlaying || gameOver) && (
           <div className="game-overlay">
-            {gameOver && <h3 className="overlay-badge-red">GAME OVER ({score})</h3>}
-            <button onClick={start} className="glow-btn overlay-btn">
+            {gameOver && <h3 className="overlay-badge-red" style={{ fontSize: '1rem', padding: '0.4rem 1rem' }}>GAME OVER ({score})</h3>}
+            <button onClick={start} className="glow-btn overlay-btn" style={{ padding: '0.8rem 1.5rem', fontSize: '1rem' }}>
               {gameOver ? '다시 도전' : '게임 시작'}
             </button>
           </div>
         )}
+      </div>
+
+      <div className="text-xs text-gray-500 mt-2 text-center">
+        <span>조작: 방향키(A / D)로 이동 │ Space Bar로 공격</span>
       </div>
     </div>
   );

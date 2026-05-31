@@ -149,19 +149,19 @@ function ClockWidget({ playBeep }) {
           <ul className="space-y-3 text-sm text-gray-300">
             <li className="flex items-start gap-2">
               <span className="text-[#00f2fe] font-bold">✔</span>
-              <span>**완벽한 바탕화면 노출**: 투명 유리 스타일의 글래스모피즘이 적용되어 배경화면과 자연스럽게 어우러집니다.</span>
+              <span>**유연한 화면 크기 조절**: 위젯의 사각형 크기를 **소(Small), 중(Medium), 대(Large)** 3단계로 자유롭게 셋팅하여 바탕화면에 조화롭게 배치 가능합니다.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-[#00f2fe] font-bold">✔</span>
-              <span>**마우스 자유 이동**: 위젯을 잡고 드래그하면 모니터 어디든 자유롭게 배치가 가능합니다.</span>
+              <span>**디지털+아날로그 결합 모드**: 디지털 숫자 시계와 클래식 아날로그 원형 시계를 동시 표시하여 두 가지 감성을 모두 채울 수 있습니다.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[#00f2fe] font-bold">✔</span>
+              <span>**완벽한 바탕화면 노출**: 투명 유리 스타일의 글래스모피즘이 적용되어 배경화면과 자연스럽게 어우러집니다. (드래그 자유 이동)</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-[#00f2fe] font-bold">✔</span>
               <span>**다양한 커스텀**: 마우스 우클릭을 통해 5종 네온 광원 색상(블루/퍼플/그린/오렌지/레드) 및 항상 위에 고정 설정을 제공합니다.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-[#00f2fe] font-bold">✔</span>
-              <span>**스톱워치 연동**: 필요시 우하단 모드 전환을 통해 소수점 두 자리까지 세밀한 시간 측정이 가능합니다.</span>
             </li>
           </ul>
 

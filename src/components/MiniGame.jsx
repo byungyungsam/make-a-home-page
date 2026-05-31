@@ -134,6 +134,7 @@ function SnakeGame({ playBeep }) {
   useEffect(() => {
     const handleKeys = (e) => {
       if (!isPlaying) return;
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault();
       const d = dirRef.current;
       if ((e.key === 'ArrowUp' || e.key === 'w') && d.y !== 1) nextDirRef.current = { x: 0, y: -1 };
       if ((e.key === 'ArrowDown' || e.key === 's') && d.y !== -1) nextDirRef.current = { x: 0, y: 1 };
@@ -390,6 +391,7 @@ function TetrisGame({ playBeep }) {
   useEffect(() => {
     const handleKeys = (e) => {
       if (!isPlaying) return;
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault();
       if (e.key === 'ArrowLeft') moveLeftRight(-1);
       if (e.key === 'ArrowRight') moveLeftRight(1);
       if (e.key === 'ArrowDown') drop();
@@ -684,7 +686,10 @@ function PongGame({ playBeep }) {
   }, []);
 
   useEffect(() => {
-    const handleKeyDown = (e) => { keyState.current[e.key] = true; };
+    const handleKeyDown = (e) => {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault();
+      keyState.current[e.key] = true;
+    };
     const handleKeyUp = (e) => { keyState.current[e.key] = false; };
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
@@ -861,6 +866,7 @@ function ShooterGame({ playBeep }) {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault();
       keyState.current[e.key] = true;
       if (e.key === ' ' && isPlaying) {
         lasers.current.push({ x: playerX.current + 18, y: 360, vy: -5 });
@@ -1048,7 +1054,10 @@ function BricksGame({ playBeep }) {
   }, []);
 
   useEffect(() => {
-    const handleKeyDown = (e) => { keyState.current[e.key] = true; };
+    const handleKeyDown = (e) => {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault();
+      keyState.current[e.key] = true;
+    };
     const handleKeyUp = (e) => { keyState.current[e.key] = false; };
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
@@ -1341,6 +1350,7 @@ function Game2048({ playBeep }) {
 
   useEffect(() => {
     const handleKeys = (e) => {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault();
       if (e.key === 'ArrowUp') handleMove('up');
       if (e.key === 'ArrowDown') handleMove('down');
       if (e.key === 'ArrowLeft') handleMove('left');
